@@ -20,18 +20,30 @@ namespace MvcStartApp.Controllers
             return View(authors);
         }
 
-        public async Task<IActionResult> Register(string FirstName, string LastName)
-        {
-            if (Request.HasFormContentType)
-            {
-                WebUser newUser = new()
-                {
-                    FirstName = FirstName,
-                    LastName = LastName,
-                };
-                await _repo.AddUser(newUser);
-            }
-            return View();
-        }
-    }
+		[HttpGet]
+		public IActionResult Register()
+		{
+			return View();
+		}
+
+        [HttpPost]
+		public async Task<IActionResult> Register(WebUser newUser)
+		{
+			await _repo.AddUser(newUser);
+			return View(newUser);
+		}
+		//public async Task<IActionResult> Register(string FirstName, string LastName)
+		//      {
+		//          if (Request.HasFormContentType)
+		//          {
+		//              WebUser newUser = new()
+		//              {
+		//                  FirstName = FirstName,
+		//                  LastName = LastName,
+		//              };
+		//              await _repo.AddUser(newUser);
+		//          }
+		//          return View();
+		//      }
+	}
 }
