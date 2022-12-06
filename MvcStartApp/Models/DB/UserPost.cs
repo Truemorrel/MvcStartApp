@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MvcStartApp.Models
+namespace MvcStartApp.Models.DB
 {
     /// <summary>
     ///  Модель поста в блоге

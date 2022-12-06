@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MvcStartApp.Models;
+using MvcStartApp.Models.DB;
 using System;
 using System.Threading.Tasks;
 

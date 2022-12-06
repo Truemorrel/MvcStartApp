@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using MvcStartApp.Middlewares;
-using MvcStartApp.Models;
+using MvcStartApp.Models.DB;
+using MvcStartApp.Models.LogRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,16 +29,23 @@ namespace MvcStartApp
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
+            string logConnection = Configuration.GetConnectionString("LogConnection");
 
-            services.AddDbContext<BlogContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<BlogContext>(options => options.UseSqlServer(connection), 
+                contextLifetime: ServiceLifetime.Singleton, 
+                optionsLifetime: ServiceLifetime.Singleton);
+            services.AddDbContext<LogContext>(options => options.UseSqlServer(logConnection),
+                contextLifetime: ServiceLifetime.Singleton,
+                optionsLifetime: ServiceLifetime.Singleton);
 
             // регистрация сервиса репозитория для взаимодействия с базой данных
-            services.AddTransient<IBlogRepository, BlogRepository>();
+            services.AddScoped<IBlogRepository, BlogRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
             services.AddControllersWithViews();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogRepository logRepository)
         {
             if (env.IsDevelopment())
             {
@@ -54,18 +63,18 @@ namespace MvcStartApp
             app.UseRouting();
 
             app.UseAuthorization();
-
+                        
             // Подключаем логирвоание с использованием ПО промежуточного слоя
-            app.UseMiddleware<LoggingMiddleware>();
+            app.UseMiddleware<LoggingMiddleware>(logRepository);
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                //endpoints.MapControllerRoute(
-                //    name: "default",
-                //    pattern: "{controller=Users}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Logs}/{action=Index}/{id?}");
             });
         }
     }

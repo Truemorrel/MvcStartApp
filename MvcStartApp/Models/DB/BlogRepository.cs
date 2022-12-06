@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace MvcStartApp.Models
+namespace MvcStartApp.Models.DB
 {
     public class BlogRepository : IBlogRepository
     {
