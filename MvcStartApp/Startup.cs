@@ -39,8 +39,8 @@ namespace MvcStartApp
                 optionsLifetime: ServiceLifetime.Singleton);
 
             // регистрация сервиса репозитория для взаимодействия с базой данных
-            services.AddScoped<IBlogRepository, BlogRepository>();
-            services.AddScoped<ILogRepository, LogRepository>();
+            services.AddSingleton<IBlogRepository, BlogRepository>();
+            services.AddSingleton<ILogRepository, LogRepository>();
             services.AddControllersWithViews();
         }
 
